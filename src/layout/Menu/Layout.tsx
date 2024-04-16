@@ -1,15 +1,10 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import styles from "./Layout.module.css";
 import Button from "../../components/Button/Button";
 import { useEffect } from "react";
 import cn from "classnames";
 
 export function Layout() {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.log(location);
-  }, [location]);
   return (
     <div className={styles["layout"]}>
       <div className={styles["sidebar"]}>
@@ -19,11 +14,13 @@ export function Layout() {
           <div className={styles["email"]}>lukovskii02@mail.ru</div>
         </div>
         <div className={styles["menu"]}>
-          <Link
+          <NavLink
             to="/"
-            className={cn(styles["link"], {
-              [styles.active]: location.pathname === "/",
-            })}
+            className={({ isActive }) =>
+              cn(styles["link"], {
+                [styles.active]: isActive,
+              })
+            }
           >
             <img
               src="/menu-icon.svg"
@@ -31,15 +28,22 @@ export function Layout() {
               className={styles["icon"]}
             />
             Меню
-          </Link>
-          <Link to="/cart" className={styles["link"]}>
+          </NavLink>
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              cn(styles["link"], {
+                [styles.active]: isActive,
+              })
+            }
+          >
             <img
               src="/cart-icon.svg"
               alt="Иконка корзины"
               className={styles["icon"]}
             />
             Корзина
-          </Link>
+          </NavLink>
         </div>
         <Button className={styles["exit"]}>Выйти</Button>
       </div>
