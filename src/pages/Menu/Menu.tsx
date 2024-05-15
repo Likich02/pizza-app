@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Headling from "../../components/Headlink/Headling";
-import ProductCart from "../../components/ProductCard/ProductCard";
+
 import Search from "../../components/Search/Search";
 import { PREFIX } from "../../helpers/API";
 import { Product } from "../../interfaces/product.interface";
@@ -49,3 +49,5 @@ export function Menu() {
     </>
   );
 }
+
+export default Menu;

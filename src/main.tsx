@@ -1,19 +1,17 @@
-import React from "react";
+import React, { lazy } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+
 import "./index.css";
-import {
-  BrowserRouter,
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
-import { Menu } from "./pages/Menu/Menu.tsx";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
 import { Cart } from "./pages/Cart/Cart.tsx";
 import { Error as ErrorPage } from "./pages/Error/Error.tsx";
 import { Layout } from "./layout/Menu/Layout.tsx";
 import { Product } from "./pages/Product/Product.tsx";
 import axios from "axios";
 import { PREFIX } from "./helpers/API.ts";
+
+const Menu = lazy(() => import("./pages/Menu/Menu.tsx"));
 
 const router = createBrowserRouter([
   {
