@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Headling from "../../components/Headlink/Headling";
-
 import Search from "../../components/Search/Search";
 import { PREFIX } from "../../helpers/API";
 import { Product } from "../../interfaces/product.interface";
@@ -16,7 +15,6 @@ export function Menu() {
   const getMenu = async () => {
     try {
       setIsLoading(true);
-
       const { data } = await axios.get<Product[]>(`${PREFIX}/products`);
       setProducts(data);
       setIsLoading(false);
@@ -25,7 +23,6 @@ export function Menu() {
       if (e instanceof AxiosError) {
         setError(e.message);
       }
-
       setIsLoading(false);
       return;
     }

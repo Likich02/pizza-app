@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, defer } from "react-router-dom";
 import { Cart } from "./pages/Cart/Cart.tsx";
 import { Error as ErrorPage } from "./pages/Error/Error.tsx";
 import { Layout } from "./layout/Menu/Layout.tsx";
@@ -34,13 +34,27 @@ const router = createBrowserRouter([
         element: <Product />,
         errorElement: <>Ошибка</>,
         loader: async ({ params }) => {
-          await new Promise<void>((resolve) => {
-            setTimeout(() => {
-              resolve();
-            }, 2000);
+          return defer({
+            data: new Promise((resolve, reject) => {
+              setTimeout(() => {
+                axios
+                  .get(`${PREFIX}/productss/${params.id}`)
+                  .then((data) => resolve(data))
+                  .catch((e) => reject(e));
+              }, 2000);
+            }),
           });
-          const { data } = await axios.get(`${PREFIX}/products/${params.id}`);
-          return data;
+          // data: axios
+          //   .get(`${PREFIX}/products/${params.id}`)
+          //   .then((data) => data),
+
+          // await new Promise<void>((resolve) => {
+          //   setTimeout(() => {
+          //     resolve();
+          //   }, 2000);
+          // });
+          // const { data } = await axios.get(`${PREFIX}/products/${params.id}`);
+          // return data;
         },
       },
     ],
