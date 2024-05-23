@@ -38,7 +38,6 @@ export function Login() {
         email,
         password,
       });
-      localStorage.setItem("jwt", data.access_token);
       dispatch(userActions.addJWT(data.access_token));
       navigate("/");
     } catch (e) {
