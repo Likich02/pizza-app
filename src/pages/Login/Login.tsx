@@ -3,13 +3,14 @@ import Button from "../../components/Button/Button";
 import Headling from "../../components/Headlink/Headling";
 import Input from "../../components/Input/Input";
 import styles from "./Login.module.css";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { PREFIX } from "../../helpers/API";
 import axios, { AxiosError } from "axios";
 import { LoginResponse } from "../../interfaces/auth.interface";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispath } from "../../store/store";
-import { userActions } from "../../store/user.slice";
+import { login, userActions } from "../../store/user.slice";
+import { RootState } from "@reduxjs/toolkit/query";
 
 export type LoginForm = {
   email: {
@@ -24,6 +25,13 @@ export function Login() {
   const [error, setError] = useState<string | null>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispath>();
+  const jwt = useSelector((s: RootState) => s.user.jwt);
+
+  useEffect(() => {
+    if (jwt) {
+      navigate("/");
+    }
+  }, [jwt, navigate]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -33,19 +41,17 @@ export function Login() {
     sendLogin(email.value, password.value);
   };
   const sendLogin = async (email: string, password: string) => {
-    try {
-      const { data } = await axios.post<LoginResponse>(`${PREFIX}/auth/login`, {
-        email,
-        password,
-      });
-      dispatch(userActions.addJWT(data.access_token));
-      navigate("/");
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        console.log(e);
-        setError(e.response?.data.message);
-      }
-    }
+    dispatch(login({ email, password }));
+
+    // try {
+    //   dispatch(userActions.addJWT(data.access_token));
+    //   navigate("/");
+    // } catch (e) {
+    //   if (e instanceof AxiosError) {
+    //     console.log(e);
+    //     setError(e.response?.data.message);
+    //   }
+    // }
   };
 
   return (
