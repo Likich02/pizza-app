@@ -1,6 +1,6 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loadState } from "./storage";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { PREFIX } from "../helpers/API";
 import { LoginResponse } from "../interfaces/auth.interface";
 
@@ -12,22 +12,27 @@ export interface UserPersistentState {
 
 export interface UserState {
   jwt: string | null;
-  loginState: null | "rejected";
+  loginErrorMessage?: string;
 }
 
 const initialState: UserState = {
   jwt: loadState<UserPersistentState>(JWT_PERSISTENT_STATE)?.jwt ?? null,
-  loginState: null,
 };
 
 export const login = createAsyncThunk(
   "user/login",
   async (params: { email: string; password: string }) => {
-    const { data } = await axios.post<LoginResponse>(`${PREFIX}/auth/login`, {
-      email: params.email,
-      password: params.password,
-    });
-    return data;
+    try {
+      const { data } = await axios.post<LoginResponse>(`${PREFIX}/auth/login`, {
+        email: params.email,
+        password: params.password,
+      });
+      return data;
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        throw new Error(e.response?.data.message);
+      }
+    }
   }
 );
 
@@ -38,16 +43,20 @@ export const userSlice = createSlice({
     logout: (state) => {
       state.jwt = null;
     },
+    clearLoginError: (state) => {
+      state.loginErrorMessage = undefined;
+    },
   },
+
   extraReducers: (builder) => {
-    builder.addCase(
-      login.fulfilled,
-      (state, action: PayloadAction<LoginResponse>) => {
-        state.jwt = action.payload.access_token;
+    builder.addCase(login.fulfilled, (state, action) => {
+      if (!action.payload) {
+        return;
       }
-    );
+      state.jwt = action.payload.access_token;
+    });
     builder.addCase(login.rejected, (state, action) => {
-      state;
+      state.loginErrorMessage = action.error.message;
     });
   },
 });
