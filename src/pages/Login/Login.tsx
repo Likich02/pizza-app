@@ -5,9 +5,8 @@ import Input from "../../components/Input/Input";
 import styles from "./Login.module.css";
 import { FormEvent, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispath } from "../../store/store";
+import { AppDispath, RootState } from "../../store/store";
 import { login, userActions } from "../../store/user.slice";
-import { RootState } from "@reduxjs/toolkit/query";
 
 export type LoginForm = {
   email: {
@@ -38,16 +37,6 @@ export function Login() {
   };
   const sendLogin = async (email: string, password: string) => {
     dispatch(login({ email, password }));
-
-    // try {
-    //   dispatch(userActions.addJWT(data.access_token));
-    //   navigate("/");
-    // } catch (e) {
-    //   if (e instanceof AxiosError) {
-    //     console.log(e);
-    //     setError(e.response?.data.message);
-    //   }
-    // }
   };
 
   return (
